@@ -1,0 +1,75 @@
+﻿@model EiraPlaza.Models.ViewModels.IndexViewModel
+
+<br />
+
+@if (Model.Coupon.ToList().Count > 0)
+{
+    <div class="border">
+        <div class="carousel" data-ride="carousel" data-interval="2500">
+            @for (int i = 0; i < Model.Coupon.Count(); i++)
+            {
+                if (i == 0)
+                {
+                    <div class="carousel-item active">
+                       @{
+                           var base64 = Convert.ToBase64String(Model.Coupon.ToList()[i].Picture);
+                           var imgrc = string.Format("data:image/jpg;base64,{0}", base64);
+                       }
+                        <img src="@imgrc" height="50" class="d-block w-100" />
+                    </div>
+                }
+                else
+                {
+                    <div class="carousel-item">
+                        @{
+                            var base64 = Convert.ToBase64String(Model.Coupon.ToList()[i].Picture);
+                            var imgrc = string.Format("data:image/jpg;base64,{0}", base64);
+                         }
+                        <img src="@imgrc" height="50" class="d-block w-100" />
+                    </div>
+                }
+
+             }
+        </div>
+    </div>
+}
+
+<br /><br />
+
+<div class="container backgroundWhite">
+    <ul id="menu-filter" class="menu-filter-list list-inline text-center">
+        <li class="active btn-secondary ml-1 mr-1" data-filter=".menu-restaurant">Show All </li>
+        @foreach (var item in Model.Category)  
+        {
+            <li class="btn-primary ml-1 mr-1"data-filter=".@item.Name.Replace(" ",string.Empty)"> @item.Name </li>
+        }
+    </ul>
+
+    @foreach(var Category in Model.Category)
+    {
+        <div class="row" id="menu-wrapper">
+            <partial 
+                     name="_ThumbnailAreaPartial" 
+                     model="@Model.MenuItem.Where(u=>u.Category.Name.Equals(Category.Name))"
+             />
+        </div>
+    }
+</div>
+ 
+
+@section Scripts{ 
+   
+<script>
+    var posts = $('.post');
+    (function ($) {
+        $("#menu-filter li").click(function () {
+            $("#menu-filter li").removeClass("active btn-secondary");
+            $(this).addClass("active btn-secondary");
+
+            var selectedfilter = $(this).data("filter")
+            $(".menu-restaurant").fadeOut();
+            setTimeout(function () { $(selectedfilter).slideDown();}, 300 );
+        });
+    })(jQuery);
+</script>
+}
